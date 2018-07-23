@@ -27,7 +27,7 @@ namespace Angular
         {
             services.AddMvc();
 
-            services.AddDbContext<AngularTestContext>(options =>
+            services.AddDbContext<ContasContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("AngularContext")));
         }
 
