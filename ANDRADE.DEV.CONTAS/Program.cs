@@ -15,7 +15,7 @@ namespace ANDRADE.DEV.CONTAS
             using (var db = new ContasContext())
             {
                 var teste = db.Transacoes;
-            }
+            }  
         }
     }
 }
