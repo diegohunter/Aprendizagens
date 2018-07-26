@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace GenericCrud.Util
 {
     public class FileFluent
     {
-        public FileFluent(HttpPostedFileBase file)
+        public FileFluent(IFormFile file)
         {
             this.file = file;
 
@@ -20,7 +21,7 @@ namespace GenericCrud.Util
             }
         }
 
-        public HttpPostedFileBase file { get; set; }
+        public IFormFile file { get; set; }
         private string[] aceptedExtensions { get; set; }
         private int minSize { get; set; }
         public string ServerPath { get; set; }
@@ -61,7 +62,11 @@ namespace GenericCrud.Util
         public string TrySave()
         {
             string location = Path.Combine(ServerPath, path, fileName);
-            file.SaveAs(location);
+
+            using (var str = new FileStream(location, FileMode.Create))
+            {
+                file.CopyTo(str);
+            }
 
             return location;
         }

@@ -41,25 +41,24 @@ namespace GenericCrud.Service
             }
             
         }
-
-        public EventLog EventLog { get; set; }
+        
         public string ServiceName { get; set; }
         public string HostName { get; set; }
 
         public void RegistrarLog(string mensagem)
         {
-            if (EventLog != null)
-            {
-                EventLog.WriteEntry(mensagem);
-            }
+            //if (EventLog != null)
+            //{
+            //    EventLog.WriteEntry(mensagem);
+            //}
         }
 
         public void RegistrarLogErro(string mensagem)
         {
-            if (EventLog != null)
-            {
-                EventLog.WriteEntry(mensagem, EventLogEntryType.Error);
-            }
+            //if (EventLog != null)
+            //{
+            //    EventLog.WriteEntry(mensagem, EventLogEntryType.Error);
+            //}
         }
 
         public void Start(ICollection<JobSchedulerDTO> jobs)

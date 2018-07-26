@@ -1,6 +1,8 @@
 ﻿using Coad.GenericCrud.Config;
 using GenericCrud.Dao;
 using GenericCrud.Dao.Base;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
