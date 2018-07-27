@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.ModelBinding;
 
 namespace GenericCrud.Validations
 {
@@ -151,7 +150,7 @@ namespace GenericCrud.Validations
                 }
                 catch(Exception e)
                 {
-                    modelState.AddModelError(path, e);
+                    modelState.AddModelError(path, e.Message);
                 }
             }
         }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Data;
 using System.IO;
 using System.Web;
-using Microsoft.Office.Interop.Excel;
 using System.Text.RegularExpressions;
 using Coad.Reflection;
 using GenericCrud.Metadatas;

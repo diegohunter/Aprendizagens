@@ -12,7 +12,13 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Quartz" Version="3.0.6" />
+    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.0.8.11" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Exceptions\ErrorHandling\" />
   </ItemGroup>
 
 </Project>

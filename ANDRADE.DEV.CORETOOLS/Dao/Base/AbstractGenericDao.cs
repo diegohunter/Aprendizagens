@@ -2,7 +2,6 @@
 using Coad.GenericCrud.Dao.Base;
 using Coad.GenericCrud.Dao.Base.Pagination;
 using Coad.GenericCrud.Exceptions;
-using Coad.GenericCrud.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,7 +17,7 @@ using AutoMapper;
 using COAD.CORPORATIVO.Config;
 using Coad.GenericCrud.Config;
 using System.Linq.Expressions;
-using System.Linq.Dynamic;
+using System.Linq.Dynamic.Core;
 using GenericCrud.Models.Comparators;
 using GenericCrud.Dao;
 using System.Text;
@@ -448,8 +447,8 @@ namespace Coad.GenericCrud.Dao.Base
 
             if (DbAcessor.Db != null)
             {
-                DbAcessor.Db.Configuration.ValidateOnSaveEnabled = ValidateOnSaveEnabled;
-                DbAcessor.Db.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
+                //DbAcessor.Db.ChangeTracker..ValidateOnSaveEnabled = ValidateOnSaveEnabled;
+               // DbAcessor.Db.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
                 _dbSet = Db.Set<T>();
             }
 
@@ -458,8 +457,8 @@ namespace Coad.GenericCrud.Dao.Base
                 var dbType = ((object)Db).GetType();
                 var db = (DbContext) Activator.CreateInstance(dbType);
 
-                db.Configuration.ValidateOnSaveEnabled = ValidateOnSaveEnabled;
-                db.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
+                //db.Configuration.ValidateOnSaveEnabled = ValidateOnSaveEnabled;
+                //db.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
 
                 return db;
                 
@@ -488,11 +487,18 @@ namespace Coad.GenericCrud.Dao.Base
             }
             
             DbContext dbCtx = null;
-                dbCtx = DbContextFactory.criarDbContext(profileName, getNew, this, this.useDbContextCache);
-            
+            //dbCtx = //DbContextFactory.criarDbContext(profileName, getNew, this, this.useDbContextCache);
 
-            dbCtx.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
-            dbCtx.Configuration.ValidateOnSaveEnabled = ValidateOnSaveEnabled;
+            var config = ProfileConfigurator.getProfileConfig(this.profileName);
+            var method = config.dbContextMethod;
+
+            if (method != null)
+            {
+                dbCtx = method();
+            }
+
+            //dbCtx.Configuration.AutoDetectChangesEnabled = AutoDetectChangesEnabled;
+            //dbCtx.Configuration.ValidateOnSaveEnabled = ValidateOnSaveEnabled;
 
             DbSet = dbCtx.Set<T>();
             Db = dbCtx;
@@ -1061,20 +1067,20 @@ namespace Coad.GenericCrud.Dao.Base
         {
             GetDb().SaveChanges();
             GetDb().Dispose();
-            Db = DbContextFactory.criarDbContext(profileName);
+            //Db = DbContextFactory.criarDbContext(profileName);
             //_Db.Configuration.AutoDetectChangesEnabled = false;
         }
 
         public void LigarOtimizacaoDeUpdate()
         {
-            Db.Configuration.AutoDetectChangesEnabled = false;
-            Db.Configuration.ValidateOnSaveEnabled = false;
+           // Db.Configuration.AutoDetectChangesEnabled = false;
+           // Db.Configuration.ValidateOnSaveEnabled = false;
         }
 
         public void DesligarOtimizacaoDeUpdate()
         {
-            Db.Configuration.AutoDetectChangesEnabled = true;
-            Db.Configuration.ValidateOnSaveEnabled = true;
+           // Db.Configuration.AutoDetectChangesEnabled = true;
+          //  Db.Configuration.ValidateOnSaveEnabled = true;
         }
 
         public void MergeAll(IEnumerable<T> lstObj, bool saveChanges = true, params string[] nameId)

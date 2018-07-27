@@ -16,7 +16,6 @@ using GenericCrud.Service.Base;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Web;

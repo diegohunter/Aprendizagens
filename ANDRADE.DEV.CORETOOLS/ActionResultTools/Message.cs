@@ -1,11 +1,10 @@
 ﻿using Coad.GenericCrud.Exceptions;
 using GenericCrud.Exceptions;
 using GenericCrud.Util;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -86,27 +85,6 @@ namespace Coad.GenericCrud.ActionResultTools
             
             return msg;
         }
-        public static string FindException(Exception ex)
-        {
-            try
-            {
-                string _mensagem = "";
-                _mensagem  = FindFormattedDbEntityValidationException(ex);
-                _mensagem += FindDbEntityValidationException(ex);
-                _mensagem += FindDbUpdateException(ex);
-                _mensagem += FindEntityException(ex);
-
-                if (_mensagem == "")
-                    _mensagem += FindInnerException(ex);
-
-                return _mensagem;
-            }
-            catch
-            {
-                return ex.Message;
-            }
-
-        }
          
         private static string FindInnerException(Exception e)
         {
@@ -151,18 +129,18 @@ namespace Coad.GenericCrud.ActionResultTools
 
                         sb.AppendLine();
                         sb.AppendLine();
-                        foreach (var eve in innerException.EntityValidationErrors)
-                        {
-                            sb.AppendLine(string.Format("- A Entidade \"{0}\" com o estado \"{1}\" contém os seguintes erros:",
-                                eve.Entry.Entity.GetType().FullName, eve.Entry.State));
-                            foreach (var ve in eve.ValidationErrors)
-                            {
-                                sb.AppendLine(string.Format("-- Propriedade: \"{0}\", Valor: \"{1}\", Erro: \"{2}\"",
-                                    ve.PropertyName,
-                                    eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
-                                    ve.ErrorMessage));
-                            }
-                        }
+                        //foreach (var eve in innerException.EntityValidationErrors)
+                        //{
+                        //    sb.AppendLine(string.Format("- A Entidade \"{0}\" com o estado \"{1}\" contém os seguintes erros:",
+                        //        eve.Entry.Entity.GetType().FullName, eve.Entry.State));
+                        //    foreach (var ve in eve.ValidationErrors)
+                        //    {
+                        //        sb.AppendLine(string.Format("-- Propriedade: \"{0}\", Valor: \"{1}\", Erro: \"{2}\"",
+                        //            ve.PropertyName,
+                        //            eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
+                        //            ve.ErrorMessage));
+                        //    }
+                        //}
                         sb.AppendLine();
 
                         return sb.ToString();
@@ -191,20 +169,6 @@ namespace Coad.GenericCrud.ActionResultTools
             }
         }
 
-        private static string FindEntityException(Exception ex)
-        {
-            try
-            {
-                var innerException = ex as EntityException;
-
-                return FindInnerException(innerException);
-            }
-            catch
-            {
-                return "";
-            }
-
-        }
 
         public void AddSubmessage(Message message)
         {
