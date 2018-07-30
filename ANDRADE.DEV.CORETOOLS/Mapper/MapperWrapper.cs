@@ -2,6 +2,7 @@
 using AutoMapper.Mappers;
 using COAD.CORPORATIVO.Config;
 using GenericCrud.Config;
+using GenericCrud.Mapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Coad.GenericCrud.Mapping
 {
     public static class MapperWrapper
     {
-        public static IDictionary<string, MappingEngine> automapperProfile = new Dictionary<string, MappingEngine>();
+        public static IDictionary<string, Mapper> automapperProfile = new Dictionary<string, Mapper>();
 
         public static T Convert<T>(object val)
         {
@@ -24,9 +25,8 @@ namespace Coad.GenericCrud.Mapping
             return Mapper.Map<S,T>(val);
         }
 
-        public static MapperEngineWrapper BuildMapperEngineWrapper(Action<MapperProfileConfig> cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
+        public static MapperEngineWrapper BuildMapperEngineWrapper(GenericProfile cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
         {
-
             return new MapperEngineWrapper(cfgProfileConfig, namespaces, assembly);
         }
     }

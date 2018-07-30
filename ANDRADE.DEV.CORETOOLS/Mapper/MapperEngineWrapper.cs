@@ -14,7 +14,7 @@ namespace COAD.CORPORATIVO.Config
 {
     public class MapperEngineWrapper
     {
-        private MappingEngine engine { get; set; }
+        private IMapper Mapper { get; set; }
         private Profile profile {get; set;}
                
         public MapperEngineWrapper()
@@ -22,7 +22,7 @@ namespace COAD.CORPORATIVO.Config
             Init();
         }
         
-        public MapperEngineWrapper(Action<MapperProfileConfig> cfgProfileConfig = null)
+        public MapperEngineWrapper(GenericProfile cfgProfileConfig = null)
         {
             Init(cfgProfileConfig);
         }
@@ -32,47 +32,39 @@ namespace COAD.CORPORATIVO.Config
             Init(null, namespaces, assembly);
         }
 
-        public MapperEngineWrapper(Action<MapperProfileConfig> cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
+        public MapperEngineWrapper(GenericProfile cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
         {
             Init(cfgProfileConfig, namespaces, assembly);
         }
 
-        public void Init(Action<MapperProfileConfig> cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
+        public void Init(GenericProfile cfgProfileConfig = null, string namespaces = null, Assembly assembly = null)
         {
-            ConfigurationStore store = new ConfigurationStore(new TypeMapFactory(), MapperRegistry.Mappers);
-            store.AssertConfigurationIsValid();
-
-            MappingEngine engine = new MappingEngine(store);
-
             if (cfgProfileConfig != null)
             {
-                MapperProfileConfig profileConfig = new MapperProfileConfig();
-                profileConfig.store = store;
-                cfgProfileConfig(profileConfig);               
-                
-               // config.store = store;
+                var config = new MapperConfiguration(cfg => {
+                        cfg.AddProfile(cfgProfileConfig);
+                    
+                        if (!string.IsNullOrWhiteSpace(namespaces) && assembly != null)
+                        {
+                            IEnumerable<Type> scannedClasses = ClassScanner.ScanNameSpaceForMapperAnnotations(assembly, namespaces);
+
+                            AnnotationConfigurationStore annotadedConfig = new AnnotationConfigurationStore();
+                            annotadedConfig.Configuration = cfg;
+                            annotadedConfig.AddTypes(scannedClasses);
+                        }
+                });
+                Mapper = config.CreateMapper();
             }
-
-            if (!string.IsNullOrWhiteSpace(namespaces) && assembly != null)
-            {
-                IEnumerable<Type> scannedClasses = ClassScanner.ScanNameSpaceForMapperAnnotations(assembly, namespaces);
-
-                AnnotationConfigurationStore annotadedConfig = new AnnotationConfigurationStore();
-                annotadedConfig.store = store;
-                annotadedConfig.AddTypes(scannedClasses);
-            }
-
-            this.engine = engine;
         }
 
         public T Convert<T>(object val)
         {
-            return engine.Map<T>(val);
+            return Mapper.Map<T>(val);
         }
 
         public T Convert<S, T>(S val)
         {
-            return engine.Map<S, T>(val);
+            return Mapper.Map<S, T>(val);
         }
     }
 }

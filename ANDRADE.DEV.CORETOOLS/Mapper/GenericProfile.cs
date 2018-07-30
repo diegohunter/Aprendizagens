@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace GenericCrud.Mapper
 {
-    public abstract class GenericProfile
+    public abstract class GenericProfile : Profile
     {
         public GenericProfile()
         {
             
         }
 
-        public abstract void Configure(ConfigurationStore store);
+        public abstract void Configure(MapperConfiguration Configure);
         // Usado apenas para ser extendido como profile do automapper
     }
 }

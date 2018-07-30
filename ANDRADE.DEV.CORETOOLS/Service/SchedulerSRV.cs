@@ -6,6 +6,7 @@ using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
@@ -16,6 +17,7 @@ namespace GenericCrud.Service
 {
     public class SchedulerSRV
     {
+        public IScheduler Scheduler { get; set; }
         public SchedulerSRV()
         {
             switch(SysUtils.RetornarAmbienteEnum())
@@ -61,13 +63,19 @@ namespace GenericCrud.Service
         //    }
         //}
 
-        public void Start(ICollection<JobSchedulerDTO> jobs)
+        public async void Start(ICollection<JobSchedulerDTO> jobs)
         {
             try
             {
+                NameValueCollection props = new NameValueCollection()
+                {
+
+                    {"quartz.serializer.type", "binary" }
+                };
                 //RegistrarLog("Obtendo a instância do Quartz");
-                IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
-                scheduler.Start();
+                StdSchedulerFactory factory = new StdSchedulerFactory(props);
+                IScheduler scheduler = await factory.GetScheduler();
+                this.Scheduler = scheduler;
                                 
                 if (jobs != null && jobs.Count > 0)
                 {
@@ -77,9 +85,11 @@ namespace GenericCrud.Service
                         var concurrent = job.ConcurrentExecutionDisallowed;
                         ITrigger trigger = tipo.CriarTrigger();
                         job.JobDataMap.Add("lstJobsDTO", jobs);
-                        scheduler.ScheduleJob(job, trigger);
+                        await scheduler.ScheduleJob(job, trigger);
                     }
                 }
+
+                await scheduler.Start();
             }
             catch (Exception e)
             {
@@ -91,9 +101,11 @@ namespace GenericCrud.Service
 
         public void Stop()
         {
-            IScheduler scheduler = StdSchedulerFactory.GetDefaultScheduler();
-            IOCContainerProxy.StaticDispose();
-            scheduler.Shutdown();
+            if(Scheduler != null)
+            {
+                IOCContainerProxy.StaticDispose();
+                Scheduler.Shutdown();
+            }
         }
 
         public void StartService()

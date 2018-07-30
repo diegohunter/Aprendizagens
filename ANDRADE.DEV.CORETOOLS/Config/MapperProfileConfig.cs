@@ -15,17 +15,11 @@ namespace GenericCrud.Config
 
         }
 
-        public MapperProfileConfig(ConfigurationStore store)
+        public MapperProfileConfig(MapperConfiguration configuration)
         {
-            this.store = store;
+            this.Configuration = configuration;
         }
 
-        public ConfigurationStore store { get; set; }
-
-        public void AddProfile<TProfile>() where TProfile : GenericProfile, new()
-        {
-            GenericProfile profile = Activator.CreateInstance<TProfile>();
-            profile.Configure(store);
-        }
+        public MapperConfiguration Configuration { get; set; }
     }
 }

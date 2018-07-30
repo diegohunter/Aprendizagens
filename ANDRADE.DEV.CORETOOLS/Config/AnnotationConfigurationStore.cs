@@ -12,7 +12,8 @@ namespace GenericCrud.Config
 {
     public class AnnotationConfigurationStore
     {
-        public ConfigurationStore store { get; set; }
+        public IMapperConfigurationExpression Configuration { get; set; }
+        public IMapper Mapper { get; set; }
         public void AddType<T>()
         {
             Type type = typeof(T);
@@ -33,7 +34,7 @@ namespace GenericCrud.Config
 
         public void AddType(Type classType)
         {
-          var lstAttributeMapping = ReflectionProvider.GetAttributes<MappingAttribute>(classType);
+                var lstAttributeMapping = ReflectionProvider.GetAttributes<MappingAttribute>(classType);
 
                 foreach (var attr in lstAttributeMapping)
                 {
@@ -44,11 +45,12 @@ namespace GenericCrud.Config
                     {   
                         if (sourceType != null && destinyType != null)
                         {
-                            IMappingExpression config = store.CreateMap(sourceType, destinyType);
+                            
+                            IMappingExpression config = Configuration.CreateMap(sourceType, destinyType);
                             IMappingExpression reverseConfig = null;
                             if (attr.ReverseMapping)
                             {
-                                reverseConfig = store.CreateMap(destinyType, sourceType);
+                                reverseConfig = Configuration.CreateMap(destinyType, sourceType);
                             }
 
                             var refName = attr.confRef;
